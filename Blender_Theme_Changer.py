@@ -1,10 +1,6 @@
-from colorsys import rgb_to_hls, hls_to_rgb
-from matplotlib.colors import cnames, rgb_to_hsv, to_rgb
-from colour import Color
 from xml.dom import minidom
 import tkinter as tk
-from tkinter import colorchooser, filedialog
-from tkinter import *
+from tkinter import DISABLED, NORMAL, HORIZONTAL, DoubleVar, colorchooser, filedialog
 
 
 
@@ -25,6 +21,17 @@ Roundness = 0.4
 InterfaceNodesWithAlpha = [0, 3, 5, 6, 13, 11, 15]
 InterfaceNodesWithoutAlpha = [1, 2, 17]
 NodesWithShading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19]
+
+
+def DarkenColor(hex_color, brightness_offset=1):
+    """ takes a color like #87c95f and produces a lighter or darker variant """
+    if len(hex_color) != 7:
+        raise Exception("Passed %s into color_variant(), needs to be in #87c95f format." % hex_color)
+    rgb_hex = [hex_color[x:x+2] for x in [1, 3, 5]]
+    new_rgb_int = [int(hex_value, 16) + brightness_offset for hex_value in rgb_hex]
+    new_rgb_int = [min([255, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 255
+    # hex() produces "0x88", we want just "88"
+    return "#" + "".join([hex(i)[2:] for i in new_rgb_int])
 
 
 def pickfile():
@@ -50,15 +57,6 @@ def pickcolor():
     else:
         colorframe.config(bg = '#%02x%02x%02x' % color[0])
         globals()["BlendColor"] = color
-
-
-def adjust_lightness(color, amount=0.5):
-    try:
-        c = cnames[color]
-    except:
-        c = color
-    c = rgb_to_hls(*to_rgb(c))
-    return hls_to_rgb(c[0], max(0, min(1, amount * c[1])), c[2])
 
 
 def ShadeSwitch():
@@ -90,35 +88,14 @@ def Apply():
     TCE = theme.getElementsByTagName("ThemeClipEditor")
 
 
+# Making the Main 3 colors
+
     # HEX Color wiithout the alpha value
     SolidColor = BlendColor[1]
 
 
     # Making a darker version of the same color for more use
-    TEMPListColor = list(BlendColor[0])
-
-    #--> Transforming the Color list into a float tuple
-    num = 0
-    for i in TEMPListColor:
-        TEMPListColor[num] = float(i / 255)
-        num += 1
-    TEMPTupleColor = tuple(TEMPListColor)
-
-    #--> Adjusting the color to be darker
-    TEMPTupleColor2 = adjust_lightness(TEMPTupleColor, 0.4)
-
-    #--> Transforming the Color list into an int tuple
-    TEMPListColor2 = list(TEMPTupleColor2)
-    num2 = 0
-    for i in TEMPListColor2:
-        TEMPListColor2[num2] = int(i * 255)
-        num2 += 1
-    TEMPTupleColor3 = tuple(TEMPListColor2)
-
-
-    # Dark Color Hex
-    DarkSolidColor = '#%02x%02x%02x' % TEMPTupleColor3
-
+    DarkSolidColor = str(DarkenColor(BlendColor[1], -150))
     
     
     # HEX Color with alpha value
@@ -127,7 +104,7 @@ def Apply():
     TupleColor = tuple(ListColor)
     AlphaColor = '#%02x%02x%02x%02x' % TupleColor
 
-    #---------------------------------------------------------Applying THe Color the theme XML
+# Applying THe Color the theme XML
     for i in InterfaceNodesWithAlpha:
         TWC[i].attributes['inner_sel'].value = AlphaColor
 
@@ -168,7 +145,7 @@ def Apply():
 
 # Applying Roundeness to UI
     for i in NodesWithShading:
-        TWC[i].attributes['roundness'].value = Roundness
+        TWC[i].attributes['roundness'].value = str(Roundness)
 
 # Saving
     with open(BlendFilePath, "w") as File:
@@ -178,10 +155,9 @@ def Apply():
 
 
 
-
-# Useless Frame
-frame = tk.Frame(root, bg = "black")
-frame.place(relwidth=1, relheigh=1)
+# Background Frame
+BFrame = tk.Frame(root, bg = "black")
+BFrame.place(relwidth=1, relheigh=1)
 
 # The Button to pick the userpref blend file
 FileButton = tk.Button(root, text="Preset File", padx=5, pady=5, fg="black", bg="white", command=pickfile)
