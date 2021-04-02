@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+upx-3.96-win64/
+dist/
+build/
+.vscode/
+_pycache_/
+Blender_Theme_Changer.spec
