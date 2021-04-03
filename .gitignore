@@ -1,0 +1,5 @@
+upx-3.96-win64/
+dist/
+build/
+__pycache__/
+Blender_Theme_Changer.spec
