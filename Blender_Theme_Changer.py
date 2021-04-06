@@ -11,7 +11,8 @@ from os import path
 root = tk.Tk()
 root.title("Blender Theme Changer")
 root.geometry("350x500")
-#root.iconwindow = ("Logo.png")
+root.iconbitmap = ("MCLogo.ico")
+
 
 
 # Main Vars
