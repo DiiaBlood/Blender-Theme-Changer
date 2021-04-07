@@ -102,16 +102,17 @@ def Apply():
     TCE = theme.getElementsByTagName("ThemeClipEditor")
 
 
-# Making the Main 3 colors
+# Making the Main 4 colors
 
     # HEX Color wiithout the alpha value
     SolidColor = BlendColor[1]
 
 
     # Making a darker version of the same color for more use
-    TEMPDarkSolidColor = DarkenColor(BlendColor[1], -60)
-    TEMPDarkSolidColor2 = Color(BlendColor[1], luminance=0.4)
-    DarkSolidColor = TEMPDarkSolidColor2.hex
+    TEMPDarkSolidColor1 = Color(BlendColor[1], luminance=0.4)
+    TEMPDarkSolidColor2 = Color(BlendColor[1], luminance=0.2)
+    DarkSolidColor = TEMPDarkSolidColor1.hex
+    DarkSolidColor2 = TEMPDarkSolidColor2.hex
     
     
     # HEX Color with alpha value
@@ -147,6 +148,7 @@ def Apply():
     TP[0].attributes["active_modifier"].value = SolidColor
 
     TO[0].attributes["active"].value = DarkSolidColor
+    TO[0].attributes["selected_highlight"].value = DarkSolidColor2
 
     TI[0].attributes["info_selected"].value = DarkSolidColor
 
@@ -155,6 +157,9 @@ def Apply():
     TC[0].attributes["line_output"].value = SolidColor
 
     TCE[0].attributes["frame_current"].value = DarkSolidColor
+
+
+    
 # Applying Shading to UI
     for i in NodesWithShading:
         TWC[i].attributes['show_shaded'].value = Shade
